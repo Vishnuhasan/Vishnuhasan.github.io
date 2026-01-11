@@ -18,13 +18,13 @@ let lastScroll = 0;
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;
-    
+
     if (currentScroll > 50) {
         navbar.classList.add('scrolled');
     } else {
         navbar.classList.remove('scrolled');
     }
-    
+
     lastScroll = currentScroll;
 });
 
@@ -34,12 +34,12 @@ const navLinks = document.querySelectorAll('.nav-link');
 
 function highlightNavLink() {
     const scrollPosition = window.pageYOffset;
-    
+
     sections.forEach(section => {
         const sectionTop = section.offsetTop - 100;
         const sectionHeight = section.offsetHeight;
         const sectionId = section.getAttribute('id');
-        
+
         if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
             navLinks.forEach(link => {
                 link.classList.remove('active');
@@ -97,7 +97,7 @@ function animateCounter(element, target, duration = 2000) {
     const start = 0;
     const increment = target / (duration / 16);
     let current = start;
-    
+
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
@@ -129,7 +129,7 @@ const statsObserver = new IntersectionObserver((entries) => {
             statNumbers.forEach(stat => {
                 const text = stat.textContent;
                 let targetValue;
-                
+
                 if (text.includes('M+')) {
                     targetValue = parseFloat(text) * 1000000;
                 } else if (text.includes('K+')) {
@@ -139,7 +139,7 @@ const statsObserver = new IntersectionObserver((entries) => {
                 } else {
                     targetValue = parseFloat(text);
                 }
-                
+
                 stat.textContent = '0';
                 animateCounter(stat, targetValue);
             });
@@ -158,7 +158,7 @@ document.addEventListener('mousemove', (e) => {
     const orbs = document.querySelectorAll('.gradient-orb');
     const mouseX = e.clientX / window.innerWidth;
     const mouseY = e.clientY / window.innerHeight;
-    
+
     orbs.forEach((orb, index) => {
         const speed = (index + 1) * 20;
         const x = (mouseX - 0.5) * speed;
@@ -169,14 +169,14 @@ document.addEventListener('mousemove', (e) => {
 
 // ===== Contact Card Click Animation =====
 document.querySelectorAll('.contact-card').forEach(card => {
-    card.addEventListener('click', function(e) {
+    card.addEventListener('click', function (e) {
         // Create ripple effect
         const ripple = document.createElement('div');
         const rect = this.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
         const x = e.clientX - rect.left - size / 2;
         const y = e.clientY - rect.top - size / 2;
-        
+
         ripple.style.width = ripple.style.height = size + 'px';
         ripple.style.left = x + 'px';
         ripple.style.top = y + 'px';
@@ -186,11 +186,11 @@ document.querySelectorAll('.contact-card').forEach(card => {
         ripple.style.transform = 'scale(0)';
         ripple.style.animation = 'ripple 0.6s ease-out';
         ripple.style.pointerEvents = 'none';
-        
+
         this.style.position = 'relative';
         this.style.overflow = 'hidden';
         this.appendChild(ripple);
-        
+
         setTimeout(() => ripple.remove(), 600);
     });
 });
@@ -219,7 +219,7 @@ const createScrollProgress = () => {
     progressBar.style.zIndex = '9999';
     progressBar.style.transition = 'width 0.1s ease';
     document.body.appendChild(progressBar);
-    
+
     window.addEventListener('scroll', () => {
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (window.pageYOffset / windowHeight) * 100;
@@ -234,7 +234,7 @@ const heroTitle = document.querySelector('.hero-title');
 if (heroTitle) {
     const originalText = heroTitle.innerHTML;
     heroTitle.style.opacity = '0';
-    
+
     setTimeout(() => {
         heroTitle.style.opacity = '1';
         heroTitle.style.animation = 'fadeInUp 0.8s ease';
@@ -268,3 +268,39 @@ if ('IntersectionObserver' in window) {
 console.log('%c👋 Hi there, fellow developer!', 'color: #6366f1; font-size: 20px; font-weight: bold;');
 console.log('%cLooking for something? Feel free to reach out!', 'color: #8b5cf6; font-size: 14px;');
 console.log('%c📧 vishnuhasan1710@gmail.com', 'color: #ec4899; font-size: 14px;');
+
+// ===== Dynamic Years of Experience =====
+function updateExperience() {
+    const startDate = new Date('2022-08-01'); // Start date: Aug 1, 2022
+    const today = new Date();
+
+    let years = today.getFullYear() - startDate.getFullYear();
+    const monthDiff = today.getMonth() - startDate.getMonth();
+
+    // Adjust years if we haven't reached the anniversary month yet
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < startDate.getDate())) {
+        years--;
+    }
+
+    const experienceText = `${years}+`;
+
+    // Update the main stat number
+    const experienceStat = document.getElementById('experience-stat');
+    if (experienceStat) {
+        experienceStat.textContent = experienceText;
+    }
+
+    // Update other badges in text
+    document.querySelectorAll('.experience-badge').forEach(badge => {
+        badge.textContent = experienceText;
+    });
+
+    // Update Meta Description for SEO/Sharing (if JS is executed by crawler)
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+        metaDescription.content = metaDescription.content.replace(/\d+\+ years/, `${experienceText} years`);
+    }
+}
+
+// Run immediately
+updateExperience();
